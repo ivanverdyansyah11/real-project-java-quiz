@@ -1,47 +1,46 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-    <%@ page import="com.quizapp.model.Question" %>
-        <%@ page import="java.util.List" %>
-            <!DOCTYPE html>
-            <html>
+<%@ page import="com.quizapp.model.Question" %>
+<%@ page import="java.util.List" %>
 
-            <head>
-                <meta charset="UTF-8">
-                <title>Quiz App - Quiz</title>
-            </head>
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Quiz Page | Program Quiz App</title>
 
-            <body>
-                <% if (session.getAttribute("loggedIn")==null || !(boolean) session.getAttribute("loggedIn")) {
-                    response.sendRedirect("login.jsp"); return; } List<Question> questions = (List<Question>)
-                        session.getAttribute("questions");
-                        int currentIndex = (int) session.getAttribute("currentQuestionIndex");
-                        Question currentQuestion = questions.get(currentIndex);
-                        %>
+        <%-- STYLE CSS --%>
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/style.css">
+        <%-- END STYLE CSS --%>
+    </head>
+    <body>
+        <% if (session.getAttribute("loggedIn")==null || !(boolean) session.getAttribute("loggedIn")) {
+            response.sendRedirect("login.jsp"); return; } List<Question> questions = (List<Question>)
+                session.getAttribute("questions");
+                int currentIndex = (int) session.getAttribute("currentQuestionIndex");
+                Question currentQuestion = questions.get(currentIndex);
+                %>
 
-                        <h1>Quiz</h1>
+        <div class="main">
+            <h3 class="main-title"><%= currentQuestion.getQuestionText() %></h3>
+            <p class="main-description">Question <%= currentIndex + 1 %> of <%= questions.size() %></p>
+            <form action="answer" method="post" class="form" style="grid-template-columns: auto;">
+                <% for (Question.Option option : currentQuestion.getOptions()) { %>
+                <div class="form-group" style="flex-direction: row !important;">
+                    <input type="radio" id="option<%= option.getLabel() %>" name="option"
+                           value="<%= getOptionValue(option.getLabel()) %>" required>
+                    <label for="option<%= option.getLabel() %>">
+                        <%= option.getLabel() %>: <%= option.getText() %>
+                    </label>
+                </div>
+                <% } %>
+                <div class="button-group">
+                    <button type="submit" class="button-primary" style="width: 100%; text-align: center;">Submit Answer</button>
+                </div>
+            </form>
+        </div>
 
-                        <div>
-                            <h2>Question <%= currentIndex + 1 %> of <%= questions.size() %>
-                            </h2>
-                            <p>
-                                <%= currentQuestion.getQuestionText() %>
-                            </p>
-
-                            <form action="answer" method="post">
-                                <% for (Question.Option option : currentQuestion.getOptions()) { %>
-                                    <div>
-                                        <input type="radio" id="option<%= option.getLabel() %>" name="option"
-                                            value="<%= getOptionValue(option.getLabel()) %>" required>
-                                        <label for="option<%= option.getLabel() %>">
-                                            <%= option.getLabel() %>: <%= option.getText() %>
-                                        </label>
-                                    </div>
-                                    <% } %>
-                                        <button type="submit">Submit Answer</button>
-                            </form>
-                        </div>
-
-                        <%! private int getOptionValue(String label) { switch(label) { case "A" : return 1; case "B" :
-                            return 2; case "C" : return 3; case "D" : return 4; default: return 0; } } %>
-            </body>
-
-            </html>
+        <%! private int getOptionValue(String label) { switch(label) { case "A" : return 1; case "B" :
+            return 2; case "C" : return 3; case "D" : return 4; default: return 0; } } %>
+    </body>
+</html>

@@ -1,37 +1,48 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="com.quizapp.model.User" %>
 <%@ page import="com.quizapp.dao.ScoreDAO" %>
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Quiz App - Result</title>
-</head>
-<body>
-<%
-    if (session.getAttribute("loggedIn") == null || !(boolean) session.getAttribute("loggedIn")) {
-        response.sendRedirect("login.jsp");
-        return;
-    }
 
-    User user = (User) session.getAttribute("user");
-    int finalQuizScore = (int) session.getAttribute("finalQuizScore");
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Result Page | Program Quiz App</title>
 
-    ScoreDAO scoreDAO = new ScoreDAO();
-    int totalScore = scoreDAO.getTotalScoreByUserId(user.getId());
-%>
+        <%-- STYLE CSS --%>
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/style.css">
+        <%-- END STYLE CSS --%>
+    </head>
+    <body>
+        <%
+            if (session.getAttribute("loggedIn") == null || !(boolean) session.getAttribute("loggedIn")) {
+                response.sendRedirect("login.jsp");
+                return;
+            }
 
-<h1>Quiz Results</h1>
+            User user = (User) session.getAttribute("user");
+            int finalQuizScore = (int) session.getAttribute("finalQuizScore");
 
-<div>
-    <h2>Congratulations, <%= user.getName() %>!</h2>
-    <p>You have completed the quiz.</p>
-    <p>Your score for this quiz: <%= finalQuizScore %></p>
-    <p>Your total score now: <%= totalScore %></p>
-</div>
+            ScoreDAO scoreDAO = new ScoreDAO();
+            int totalScore = scoreDAO.getTotalScoreByUserId(user.getId());
+        %>
 
-<div>
-    <a href="index.jsp"><button>Back to Home</button></a>
-</div>
-</body>
+        <div class="main">
+            <h3 class="main-title">Quiz Results</h3>
+            <p class="main-description">Congratulations, <%= user.getName() %>! You have completed the quiz.</p>
+            <form class="form" style="grid-template-columns: auto;">
+                <div class="form-group">
+                    <label for="score_recent">Your score for this quiz</label>
+                    <input type="text" id="score_recent" class="input" value="<%= finalQuizScore %>" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="score_total">Your total score</label>
+                    <input type="text" id="score_total" class="input" value="<%= totalScore %>" readonly>
+                </div>
+                <div class="button-group">
+                    <a href="index.jsp" class="button-primary" style="width: 100%; text-align: center;">Back to Main Page</a>
+                </div>
+            </form>
+        </div>
+    </body>
 </html>

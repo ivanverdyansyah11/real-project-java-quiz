@@ -24,11 +24,11 @@
             <form action="login" method="post" class="form" style="grid-template-columns: auto;">
                 <div class="form-group">
                     <label for="username">Username</label>
-                    <input type="text" id="username" class="input" name="username" required>
+                    <input type="text" id="username" class="input" name="username" required placeholder="Enter your username...">
                 </div>
                 <div class="form-group">
                     <label for="password">Password:</label>
-                    <input type="password" id="password" class="input" name="password" required>
+                    <input type="password" id="password" class="input" name="password" required placeholder="Enter your password...">
                 </div>
                 <div class="button-group">
                     <button type="submit" class="button-primary" style="width: 100%; text-align: center;">Login</button>
