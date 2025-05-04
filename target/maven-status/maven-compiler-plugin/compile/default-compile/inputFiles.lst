@@ -1,0 +1,12 @@
+D:\quiz-app\src\main\java\com\quizapp\dao\QuestionDAO.java
+D:\quiz-app\src\main\java\com\quizapp\dao\ScoreDAO.java
+D:\quiz-app\src\main\java\com\quizapp\dao\UserDAO.java
+D:\quiz-app\src\main\java\com\quizapp\model\Question.java
+D:\quiz-app\src\main\java\com\quizapp\model\Score.java
+D:\quiz-app\src\main\java\com\quizapp\model\User.java
+D:\quiz-app\src\main\java\com\quizapp\servlet\AnswerServlet.java
+D:\quiz-app\src\main\java\com\quizapp\servlet\LoginServlet.java
+D:\quiz-app\src\main\java\com\quizapp\servlet\LogoutServlet.java
+D:\quiz-app\src\main\java\com\quizapp\servlet\QuizServlet.java
+D:\quiz-app\src\main\java\com\quizapp\servlet\RegisterServlet.java
+D:\quiz-app\src\main\java\com\quizapp\util\DBConnection.java

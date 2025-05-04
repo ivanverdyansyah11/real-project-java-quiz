@@ -1,0 +1,167 @@
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
+
+/* VARIABLE */
+:root {
+    --primary-color: 78, 79, 235;
+    --dark-color: 24, 24, 35;
+    --light-color: 255, 255, 255;
+    --grey-color: 246, 241, 241;
+    --green-color: 22, 196, 127;
+    --red-color: 249, 56, 39;
+}
+/* END VARIABLE */
+
+/* BASE */
+* {
+    transition: 300ms;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+a,
+label {
+    color: rgba(var(--dark-color), 1);
+    font-size: 0.913rem;
+    text-decoration: none;
+    font-family: "Urbanist", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+    margin: 0;
+    padding: 0;
+}
+/* END BASE */
+
+/* COMPONENT */
+.container {
+    padding: 0 100px;
+}
+
+.alert {
+    padding: 14px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+}
+
+.alert.alert-success {
+    background-color: rgba(var(--green-color), 0.12);
+    border: 1px solid rgba(var(--green-color), 0.12);
+    color: rgba(var(--green-color), 1);
+}
+
+.alert.alert-failed {
+    background-color: rgba(var(--red-color), 0.12);
+    border: 1px solid rgba(var(--red-color), 0.12);
+    color: rgba(var(--red-color), 1);
+}
+
+form.form {
+    display: grid;
+    gap: 16px;
+}
+
+form.form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+form.form .form-group label {
+    font-size: 0.875rem;
+    color: rgba(var(--dark-color), 0.62);
+}
+
+form.form .form-group input {
+    padding: 12px 16px;
+    border: 1px solid rgba(var(--dark-color), 0.12);
+    border-radius: 4px;
+    font-size: 0.85rem;
+    color: rgba(var(--dark-color), 1);
+}
+
+form.form .form-group input::placeholder {
+    color: rgba(var(--dark-color), 0.42);
+}
+
+.button-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.button-primary,
+.button-secondary,
+.button-secondary:hover {
+    display: inline-block;
+    padding: 12px 18px;
+    background-color: rgba(var(--primary-color), 1);
+    border-radius: 3px;
+    color: rgba(var(--light-color), 1);
+    font-size: 0.875rem;
+    text-wrap: nowrap;
+    width: fit-content;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.button-secondary,
+.button-primary:hover {
+    border-color: rgba(var(--primary-color), 1);
+    color: rgba(var(--primary-color), 1);
+    background-color: transparent;
+}
+/* END COMPONENT */
+
+/* UTILITIES */
+.authenticate {
+    width: 400px;
+    padding: 20px;
+    border-radius: 6px;
+    border: 1px solid rgba(var(--dark-color), 0.12);
+}
+
+.authenticate .authenticate-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.authenticate .authenticate-description {
+    margin-bottom: 20px;
+    font-size: 0.875rem;
+    color: rgba(var(--dark-color), 0.62);
+}
+
+.authenticate .authenticate-redirect {
+    font-size: 0.875rem;
+    margin: auto;
+    width: 100%;
+    text-align: center;
+    color: rgba(var(--dark-color), 0.42);
+    margin-top: 20px;
+}
+
+.authenticate .authenticate-redirect .redirect-link {
+    color: rgba(var(--primary-color), 1);
+}
+
+.authenticate .authenticate-redirect .redirect-link:hover {
+    text-decoration: underline;
+}
+/* END UTILITIES */
