@@ -34,7 +34,9 @@ h5,
 h6,
 p,
 a,
-label {
+label,
+button,
+input {
     color: rgba(var(--dark-color), 1);
     font-size: 0.913rem;
     text-decoration: none;

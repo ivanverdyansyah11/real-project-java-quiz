@@ -15,8 +15,9 @@
     </head>
     <body>
         <%
-            if (session.getAttribute("loggedIn") == null || !(boolean) session.getAttribute("loggedIn")) {
-                response.sendRedirect("login.jsp");
+            String loggedIn = (String) session.getAttribute("loggedIn");
+            if (loggedIn == null || !"user".equals(loggedIn)) {
+                response.sendRedirect("login-user.jsp");
                 return;
             }
 

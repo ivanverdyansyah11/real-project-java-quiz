@@ -14,12 +14,17 @@
         <%-- END STYLE CSS --%>
     </head>
     <body>
-        <% if (session.getAttribute("loggedIn")==null || !(boolean) session.getAttribute("loggedIn")) {
-            response.sendRedirect("login.jsp"); return; } List<Question> questions = (List<Question>)
-                session.getAttribute("questions");
-                int currentIndex = (int) session.getAttribute("currentQuestionIndex");
-                Question currentQuestion = questions.get(currentIndex);
-                %>
+        <%
+            String loggedIn = (String) session.getAttribute("loggedIn");
+            if (loggedIn == null || !"user".equals(loggedIn)) {
+                response.sendRedirect("login-user.jsp");
+                return;
+            }
+
+            List<Question> questions = (List<Question>) session.getAttribute("questions");
+            int currentIndex = (int) session.getAttribute("currentQuestionIndex");
+            Question currentQuestion = questions.get(currentIndex);
+        %>
 
         <div class="main">
             <h3 class="main-title"><%= currentQuestion.getQuestionText() %></h3>
