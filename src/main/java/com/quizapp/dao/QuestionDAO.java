@@ -49,38 +49,32 @@ public class QuestionDAO {
 
     public List<Question> getAllQuestions() {
         List<Question> questions = new ArrayList<>();
-        String queryQuestions = "SELECT * FROM questions";
-        String queryOptions = "SELECT * FROM quizzes WHERE question_id = ?";
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet rs = null;
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmtQuestions = conn.prepareStatement(queryQuestions)) {
+        try {
+            conn = DBConnection.getConnection();
+            stmt = conn.createStatement();
+            String sql = "SELECT * FROM questions";
+            rs = stmt.executeQuery(sql);
 
-            ResultSet rsQuestions = stmtQuestions.executeQuery();
-
-            while (rsQuestions.next()) {
+            while (rs.next()) {
                 Question question = new Question();
-                question.setId(rsQuestions.getInt("id"));
-                question.setQuestionText(rsQuestions.getString("question_text"));
-                question.setCorrectAnswer(rsQuestions.getString("correct_answear"));
-
-                try (PreparedStatement stmtOptions = conn.prepareStatement(queryOptions)) {
-                    stmtOptions.setInt(1, question.getId());
-                    ResultSet rsOptions = stmtOptions.executeQuery();
-
-                    while (rsOptions.next()) {
-                        Question.Option option = new Question.Option();
-                        option.setId(rsOptions.getInt("id"));
-                        option.setLabel(rsOptions.getString("option_label"));
-                        option.setText(rsOptions.getString("option_text"));
-                        question.addOption(option);
-                    }
-                }
-
+                question.setId(rs.getInt("id"));
+                question.setQuestionText(rs.getString("question_text"));
                 questions.add(question);
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+                if (conn != null) DBConnection.closeConnection(conn);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
         return questions;
