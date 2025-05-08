@@ -7,7 +7,12 @@ D:\quiz-app\src\main\java\com\quizapp\model\Question.java
 D:\quiz-app\src\main\java\com\quizapp\model\Score.java
 D:\quiz-app\src\main\java\com\quizapp\model\User.java
 D:\quiz-app\src\main\java\com\quizapp\servlet\AdminLoginServlet.java
+D:\quiz-app\src\main\java\com\quizapp\servlet\AllQuestionServlet.java
 D:\quiz-app\src\main\java\com\quizapp\servlet\AnswerServlet.java
+D:\quiz-app\src\main\java\com\quizapp\servlet\CreateQuestionServlet.java
+D:\quiz-app\src\main\java\com\quizapp\servlet\DeleteQuestionServlet.java
+D:\quiz-app\src\main\java\com\quizapp\servlet\DetailQuestionServlet.java
+D:\quiz-app\src\main\java\com\quizapp\servlet\EditQuestionServlet.java
 D:\quiz-app\src\main\java\com\quizapp\servlet\LogoutServlet.java
 D:\quiz-app\src\main\java\com\quizapp\servlet\QuizServlet.java
 D:\quiz-app\src\main\java\com\quizapp\servlet\RegisterServlet.java

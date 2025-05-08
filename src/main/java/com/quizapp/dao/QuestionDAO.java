@@ -3,10 +3,7 @@ package com.quizapp.dao;
 import com.quizapp.model.Question;
 import com.quizapp.util.DBConnection;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,7 +17,7 @@ public class QuestionDAO {
         ResultSet rs = null;
 
         try {
-            conn = DBUtil.getConnection();
+            conn = DBConnection.getConnection();
             String sql = "SELECT * FROM questions WHERE id LIKE ? OR question_text LIKE ?";
             stmt = conn.prepareStatement(sql);
             String searchPattern = "%" + keyword + "%";
@@ -41,7 +38,7 @@ public class QuestionDAO {
             try {
                 if (rs != null) rs.close();
                 if (stmt != null) stmt.close();
-                if (conn != null) DBUtil.closeConnection(conn);
+                if (conn != null) DBConnection.closeConnection(conn);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -131,5 +128,205 @@ public class QuestionDAO {
         }
 
         return question;
+    }
+
+    public boolean createQuestion(Question question, List<String> optionTexts) {
+        Connection conn = null;
+        PreparedStatement stmtQuestion = null;
+        PreparedStatement stmtOption = null;
+        ResultSet generatedKeys = null;
+        boolean success = false;
+
+        try {
+            conn = DBConnection.getConnection();
+            conn.setAutoCommit(false);
+
+            // Insert question
+            String insertQuestionSql = "INSERT INTO questions (question_text, correct_answear) VALUES (?, ?)";
+            stmtQuestion = conn.prepareStatement(insertQuestionSql, Statement.RETURN_GENERATED_KEYS);
+            stmtQuestion.setString(1, question.getQuestionText());
+            stmtQuestion.setString(2, question.getCorrectAnswer());
+            int questionRowsAffected = stmtQuestion.executeUpdate();
+
+            if (questionRowsAffected > 0) {
+                generatedKeys = stmtQuestion.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    int questionId = generatedKeys.getInt(1);
+
+                    // Insert options
+                    String insertOptionSql = "INSERT INTO quizzes (question_id, option_label, option_text) VALUES (?, ?, ?)";
+                    stmtOption = conn.prepareStatement(insertOptionSql);
+
+                    String[] labels = {"A", "B", "C", "D"};
+                    for (int i = 0; i < Math.min(labels.length, optionTexts.size()); i++) {
+                        stmtOption.setInt(1, questionId);
+                        stmtOption.setString(2, labels[i]);
+                        stmtOption.setString(3, optionTexts.get(i));
+                        stmtOption.addBatch();
+                    }
+
+                    int[] optionRowsAffected = stmtOption.executeBatch();
+                    success = optionRowsAffected.length == Math.min(labels.length, optionTexts.size());
+                }
+            }
+
+            if (success) {
+                conn.commit();
+            } else {
+                conn.rollback();
+            }
+        } catch (SQLException e) {
+            try {
+                if (conn != null) {
+                    conn.rollback();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        } finally {
+            try {
+                if (generatedKeys != null) generatedKeys.close();
+                if (stmtOption != null) stmtOption.close();
+                if (stmtQuestion != null) stmtQuestion.close();
+                if (conn != null) {
+                    conn.setAutoCommit(true);
+                    DBConnection.closeConnection(conn);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return success;
+    }
+
+    public boolean updateQuestion(Question question, List<String> optionTexts) {
+        Connection conn = null;
+        PreparedStatement stmtQuestion = null;
+        PreparedStatement stmtOption = null;
+        boolean success = false;
+
+        try {
+            conn = DBConnection.getConnection();
+            conn.setAutoCommit(false);
+
+            // Update question
+            String updateQuestionSql = "UPDATE questions SET question_text = ?, correct_answear = ? WHERE id = ?";
+            stmtQuestion = conn.prepareStatement(updateQuestionSql);
+            stmtQuestion.setString(1, question.getQuestionText());
+            stmtQuestion.setString(2, question.getCorrectAnswer());
+            stmtQuestion.setInt(3, question.getId());
+            int questionRowsAffected = stmtQuestion.executeUpdate();
+
+            if (questionRowsAffected > 0) {
+                // Get option IDs for this question
+                List<Integer> optionIds = new ArrayList<>();
+                try (PreparedStatement stmtGetOptions = conn.prepareStatement("SELECT id FROM quizzes WHERE question_id = ? ORDER BY option_label")) {
+                    stmtGetOptions.setInt(1, question.getId());
+                    ResultSet rs = stmtGetOptions.executeQuery();
+                    while (rs.next()) {
+                        optionIds.add(rs.getInt("id"));
+                    }
+                }
+
+                // Update options
+                if (optionIds.size() == optionTexts.size()) {
+                    String updateOptionSql = "UPDATE quizzes SET option_text = ? WHERE id = ?";
+                    stmtOption = conn.prepareStatement(updateOptionSql);
+
+                    for (int i = 0; i < optionIds.size(); i++) {
+                        stmtOption.setString(1, optionTexts.get(i));
+                        stmtOption.setInt(2, optionIds.get(i));
+                        stmtOption.addBatch();
+                    }
+
+                    int[] optionRowsAffected = stmtOption.executeBatch();
+                    success = optionRowsAffected.length == optionIds.size();
+                }
+            }
+
+            if (success) {
+                conn.commit();
+            } else {
+                conn.rollback();
+            }
+        } catch (SQLException e) {
+            try {
+                if (conn != null) {
+                    conn.rollback();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmtOption != null) stmtOption.close();
+                if (stmtQuestion != null) stmtQuestion.close();
+                if (conn != null) {
+                    conn.setAutoCommit(true);
+                    DBConnection.closeConnection(conn);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return success;
+    }
+
+    public boolean deleteQuestion(int questionId) {
+        Connection conn = null;
+        PreparedStatement stmtDeleteOptions = null;
+        PreparedStatement stmtDeleteQuestion = null;
+        boolean success = false;
+
+        try {
+            conn = DBConnection.getConnection();
+            conn.setAutoCommit(false);
+
+            // Delete options first (foreign key constraint)
+            String deleteOptionsSql = "DELETE FROM quizzes WHERE question_id = ?";
+            stmtDeleteOptions = conn.prepareStatement(deleteOptionsSql);
+            stmtDeleteOptions.setInt(1, questionId);
+            stmtDeleteOptions.executeUpdate();
+
+            // Then delete the question
+            String deleteQuestionSql = "DELETE FROM questions WHERE id = ?";
+            stmtDeleteQuestion = conn.prepareStatement(deleteQuestionSql);
+            stmtDeleteQuestion.setInt(1, questionId);
+            int questionRowsAffected = stmtDeleteQuestion.executeUpdate();
+
+            success = questionRowsAffected > 0;
+
+            if (success) {
+                conn.commit();
+            } else {
+                conn.rollback();
+            }
+        } catch (SQLException e) {
+            try {
+                if (conn != null) {
+                    conn.rollback();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmtDeleteOptions != null) stmtDeleteOptions.close();
+                if (stmtDeleteQuestion != null) stmtDeleteQuestion.close();
+                if (conn != null) {
+                    conn.setAutoCommit(true);
+                    DBConnection.closeConnection(conn);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return success;
     }
 }
