@@ -17,6 +17,14 @@ public class EditQuestionServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession();
+
+        String loggedIn = (String) session.getAttribute("loggedIn");
+        if (loggedIn == null || !"admin".equals(loggedIn)) {
+            response.sendRedirect("login-admin.jsp");
+            return;
+        }
+
         String idParam = request.getParameter("id");
 
         if (idParam == null || idParam.trim().isEmpty()) {
@@ -30,7 +38,6 @@ public class EditQuestionServlet extends HttpServlet {
             Question question = questionDAO.getQuestionById(questionId);
 
             if (question == null) {
-                HttpSession session = request.getSession();
                 session.setAttribute("errorMessage", "Question not found!");
                 response.sendRedirect(request.getContextPath() + "/AllQuestionServlet");
                 return;
@@ -45,13 +52,11 @@ public class EditQuestionServlet extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Get form parameters
         String idParam = request.getParameter("id");
         String questionText = request.getParameter("question_text");
         String correctAnswer = request.getParameter("correct_answear");
         String[] optionTexts = request.getParameterValues("option_text[]");
 
-        // Basic validation
         if (idParam == null || idParam.trim().isEmpty() ||
                 questionText == null || questionText.trim().isEmpty() ||
                 correctAnswer == null || correctAnswer.trim().isEmpty() ||
@@ -66,7 +71,6 @@ public class EditQuestionServlet extends HttpServlet {
                     Question question = dao.getQuestionById(questionId);
                     request.setAttribute("question", question);
                 } catch (NumberFormatException e) {
-                    // Ignore, will redirect below
                 }
             }
 
@@ -77,18 +81,15 @@ public class EditQuestionServlet extends HttpServlet {
         try {
             int questionId = Integer.parseInt(idParam);
 
-            // Create question object
             Question question = new Question();
             question.setId(questionId);
             question.setQuestionText(questionText);
             question.setCorrectAnswer(correctAnswer);
 
-            // Update in database
             QuestionDAO questionDAO = new QuestionDAO();
             boolean success = questionDAO.updateQuestion(question, Arrays.asList(optionTexts));
 
             if (success) {
-                // Set success message and redirect
                 HttpSession session = request.getSession();
                 session.setAttribute("successMessage", "Question updated successfully!");
                 response.sendRedirect(request.getContextPath() + "/AllQuestionServlet");

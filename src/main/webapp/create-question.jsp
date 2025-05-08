@@ -1,5 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="com.quizapp.model.Admin, com.quizapp.model.Question" %>
+<%
+    String loggedIn = (String) session.getAttribute("loggedIn");
+    if (loggedIn == null || !"admin".equals(loggedIn)) {
+        response.sendRedirect("login-admin.jsp");
+        return;
+    }
+%>
 
 <!doctype html>
 <html lang="en">

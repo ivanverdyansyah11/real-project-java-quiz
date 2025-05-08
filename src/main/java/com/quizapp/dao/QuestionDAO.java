@@ -49,32 +49,38 @@ public class QuestionDAO {
 
     public List<Question> getAllQuestions() {
         List<Question> questions = new ArrayList<>();
-        Connection conn = null;
-        Statement stmt = null;
-        ResultSet rs = null;
+        String queryQuestions = "SELECT * FROM questions";
+        String queryOptions = "SELECT * FROM quizzes WHERE question_id = ?";
 
-        try {
-            conn = DBConnection.getConnection();
-            stmt = conn.createStatement();
-            String sql = "SELECT * FROM questions";
-            rs = stmt.executeQuery(sql);
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmtQuestions = conn.prepareStatement(queryQuestions)) {
 
-            while (rs.next()) {
+            ResultSet rsQuestions = stmtQuestions.executeQuery();
+
+            while (rsQuestions.next()) {
                 Question question = new Question();
-                question.setId(rs.getInt("id"));
-                question.setQuestionText(rs.getString("question_text"));
+                question.setId(rsQuestions.getInt("id"));
+                question.setQuestionText(rsQuestions.getString("question_text"));
+                question.setCorrectAnswer(rsQuestions.getString("correct_answear"));
+
+                try (PreparedStatement stmtOptions = conn.prepareStatement(queryOptions)) {
+                    stmtOptions.setInt(1, question.getId());
+                    ResultSet rsOptions = stmtOptions.executeQuery();
+
+                    while (rsOptions.next()) {
+                        Question.Option option = new Question.Option();
+                        option.setId(rsOptions.getInt("id"));
+                        option.setLabel(rsOptions.getString("option_label"));
+                        option.setText(rsOptions.getString("option_text"));
+                        question.addOption(option);
+                    }
+                }
+
                 questions.add(question);
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                if (rs != null) rs.close();
-                if (stmt != null) stmt.close();
-                if (conn != null) DBConnection.closeConnection(conn);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
         return questions;
@@ -135,7 +141,6 @@ public class QuestionDAO {
             conn = DBConnection.getConnection();
             conn.setAutoCommit(false);
 
-            // Insert question
             String insertQuestionSql = "INSERT INTO questions (question_text, correct_answear) VALUES (?, ?)";
             stmtQuestion = conn.prepareStatement(insertQuestionSql, Statement.RETURN_GENERATED_KEYS);
             stmtQuestion.setString(1, question.getQuestionText());
@@ -147,7 +152,6 @@ public class QuestionDAO {
                 if (generatedKeys.next()) {
                     int questionId = generatedKeys.getInt(1);
 
-                    // Insert options
                     String insertOptionSql = "INSERT INTO quizzes (question_id, option_label, option_text) VALUES (?, ?, ?)";
                     stmtOption = conn.prepareStatement(insertOptionSql);
 
@@ -205,7 +209,6 @@ public class QuestionDAO {
             conn = DBConnection.getConnection();
             conn.setAutoCommit(false);
 
-            // Update question
             String updateQuestionSql = "UPDATE questions SET question_text = ?, correct_answear = ? WHERE id = ?";
             stmtQuestion = conn.prepareStatement(updateQuestionSql);
             stmtQuestion.setString(1, question.getQuestionText());
@@ -214,7 +217,6 @@ public class QuestionDAO {
             int questionRowsAffected = stmtQuestion.executeUpdate();
 
             if (questionRowsAffected > 0) {
-                // Get option IDs for this question
                 List<Integer> optionIds = new ArrayList<>();
                 try (PreparedStatement stmtGetOptions = conn.prepareStatement("SELECT id FROM quizzes WHERE question_id = ? ORDER BY option_label")) {
                     stmtGetOptions.setInt(1, question.getId());
@@ -224,7 +226,6 @@ public class QuestionDAO {
                     }
                 }
 
-                // Update options
                 if (optionIds.size() == optionTexts.size()) {
                     String updateOptionSql = "UPDATE quizzes SET option_text = ? WHERE id = ?";
                     stmtOption = conn.prepareStatement(updateOptionSql);
@@ -280,13 +281,11 @@ public class QuestionDAO {
             conn = DBConnection.getConnection();
             conn.setAutoCommit(false);
 
-            // Delete options first (foreign key constraint)
             String deleteOptionsSql = "DELETE FROM quizzes WHERE question_id = ?";
             stmtDeleteOptions = conn.prepareStatement(deleteOptionsSql);
             stmtDeleteOptions.setInt(1, questionId);
             stmtDeleteOptions.executeUpdate();
 
-            // Then delete the question
             String deleteQuestionSql = "DELETE FROM questions WHERE id = ?";
             stmtDeleteQuestion = conn.prepareStatement(deleteQuestionSql);
             stmtDeleteQuestion.setInt(1, questionId);

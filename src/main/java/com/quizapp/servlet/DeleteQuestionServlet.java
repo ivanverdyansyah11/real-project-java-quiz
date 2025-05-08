@@ -15,8 +15,15 @@ public class DeleteQuestionServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String idParam = request.getParameter("id");
         HttpSession session = request.getSession();
+
+        String loggedIn = (String) session.getAttribute("loggedIn");
+        if (loggedIn == null || !"admin".equals(loggedIn)) {
+            response.sendRedirect("login-admin.jsp");
+            return;
+        }
+
+        String idParam = request.getParameter("id");
 
         if (idParam == null || idParam.trim().isEmpty()) {
             session.setAttribute("errorMessage", "Invalid question ID!");

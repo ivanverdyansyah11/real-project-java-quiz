@@ -16,6 +16,14 @@ public class DetailQuestionServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession();
+
+        String loggedIn = (String) session.getAttribute("loggedIn");
+        if (loggedIn == null || !"admin".equals(loggedIn)) {
+            response.sendRedirect("login-admin.jsp");
+            return;
+        }
+
         String idParam = request.getParameter("id");
 
         if (idParam == null || idParam.trim().isEmpty()) {
@@ -29,7 +37,6 @@ public class DetailQuestionServlet extends HttpServlet {
             Question question = questionDAO.getQuestionById(questionId);
 
             if (question == null) {
-                HttpSession session = request.getSession();
                 session.setAttribute("errorMessage", "Question not found!");
                 response.sendRedirect(request.getContextPath() + "/AllQuestionServlet");
                 return;

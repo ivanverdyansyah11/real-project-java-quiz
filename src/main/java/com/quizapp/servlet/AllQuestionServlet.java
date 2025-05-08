@@ -14,6 +14,14 @@ public class AllQuestionServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession();
+
+        String loggedIn = (String) session.getAttribute("loggedIn");
+        if (loggedIn == null || !"admin".equals(loggedIn)) {
+            response.sendRedirect("login-admin.jsp");
+            return;
+        }
+
         QuestionDAO questionDAO = new QuestionDAO();
         List<Question> questions;
 
@@ -25,11 +33,10 @@ public class AllQuestionServlet extends HttpServlet {
             questions = questionDAO.getAllQuestions();
         }
 
-        HttpSession session = request.getSession();
         String successMessage = (String) session.getAttribute("successMessage");
         if (successMessage != null) {
             request.setAttribute("successMessage", successMessage);
-            session.removeAttribute("successMessage"); // agar tidak muncul terus
+            session.removeAttribute("successMessage");
         }
 
         request.setAttribute("questions", questions);

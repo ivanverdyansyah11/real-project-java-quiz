@@ -19,17 +19,23 @@ public class CreateQuestionServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Forward to the create question JSP
+        HttpSession session = request.getSession();
+
+        String loggedIn = (String) session.getAttribute("loggedIn");
+        if (loggedIn == null || !"admin".equals(loggedIn)) {
+            response.sendRedirect("login-admin.jsp");
+            return;
+        }
+
         request.getRequestDispatcher("create-question.jsp").forward(request, response);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Get form parameters
+        HttpSession session = request.getSession();
         String questionText = request.getParameter("question_text");
         String correctAnswer = request.getParameter("correct_answear");
         String[] optionTexts = request.getParameterValues("option_text[]");
 
-        // Basic validation
         if (questionText == null || questionText.trim().isEmpty() ||
                 correctAnswer == null || correctAnswer.trim().isEmpty() ||
                 optionTexts == null || optionTexts.length != 4) {
@@ -39,18 +45,14 @@ public class CreateQuestionServlet extends HttpServlet {
             return;
         }
 
-        // Create question object
         Question question = new Question();
         question.setQuestionText(questionText);
         question.setCorrectAnswer(correctAnswer);
 
-        // Save to database
         QuestionDAO questionDAO = new QuestionDAO();
         boolean success = questionDAO.createQuestion(question, Arrays.asList(optionTexts));
 
         if (success) {
-            // Set success message and redirect
-            HttpSession session = request.getSession();
             session.setAttribute("successMessage", "Question created successfully!");
             response.sendRedirect(request.getContextPath() + "/AllQuestionServlet");
         } else {

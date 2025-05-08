@@ -2,6 +2,12 @@
 <%@ page import="com.quizapp.model.Question" %>
 <%@ page import="java.util.List" %>
 <%
+    String loggedIn = (String) session.getAttribute("loggedIn");
+    if (loggedIn == null || !"admin".equals(loggedIn)) {
+        response.sendRedirect("login-admin.jsp");
+        return;
+    }
+
     List<Question> questions = (List<Question>) request.getAttribute("questions");
     String search = (String) request.getAttribute("search");
 %>
