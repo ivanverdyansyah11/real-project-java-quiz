@@ -1,12 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="com.quizzapp.model.Admin, com.quizzapp.model.Question" %>
+<%@ page import="com.quizapp.model.Admin, com.quizapp.model.Question" %>
 
 <!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Create Question Page | Student Management System</title>
+        <title>Create Question Page | Program Quiz App</title>
 
         <%-- STYLE CSS --%>
         <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/style.css">
@@ -38,10 +38,10 @@
                     </div>
                     <div class="form-group">
                         <label>Option Label</label>
-                        <input type="text" id="option_label" class="input" name="option_label[]" readonly value="A">
-                        <input type="text" id="option_label" class="input" name="option_label[]" readonly value="B">
-                        <input type="text" id="option_label" class="input" name="option_label[]" readonly value="C">
-                        <input type="text" id="option_label" class="input" name="option_label[]" readonly value="D">
+                        <input type="text" id="option_label" class="input" readonly value="A">
+                        <input type="text" id="option_label" class="input" readonly value="B">
+                        <input type="text" id="option_label" class="input" readonly value="C">
+                        <input type="text" id="option_label" class="input" readonly value="D">
                     </div>
                     <div class="form-group">
                         <label>Option Text</label>
