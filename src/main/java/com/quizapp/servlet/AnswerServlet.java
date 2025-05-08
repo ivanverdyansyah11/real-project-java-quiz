@@ -22,8 +22,10 @@ public class AnswerServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        if (session.getAttribute("loggedIn") == null || !(boolean) session.getAttribute("loggedIn")) {
-            response.sendRedirect("login.jsp");
+
+        String loggedIn = (String) session.getAttribute("loggedIn");
+        if (loggedIn == null || !"user".equals(loggedIn)) {
+            response.sendRedirect("login-user.jsp");
             return;
         }
 
@@ -32,11 +34,11 @@ public class AnswerServlet extends HttpServlet {
             int currentIndex = (int) session.getAttribute("currentQuestionIndex");
             Question currentQuestion = questions.get(currentIndex);
 
-            String selectedOptionStr = request.getParameter("option");
-            int selectedOptionValue = Integer.parseInt(selectedOptionStr);
+            String selectedOption = request.getParameter("option");
+            String correctAnswer = currentQuestion.getCorrectAnswer();
 
             int quizScore = (int) session.getAttribute("quizScore");
-            if (selectedOptionValue == currentQuestion.getCorrectAnswer()) {
+            if (selectedOption != null && selectedOption.equalsIgnoreCase(correctAnswer)) {
                 quizScore += 10;
                 session.setAttribute("quizScore", quizScore);
             }

@@ -6,7 +6,7 @@ import java.util.List;
 public class Question {
     private int id;
     private String questionText;
-    private int correctAnswer;
+    private String correctAnswer;
     private List<Option> options;
 
     public Question() {
@@ -29,11 +29,11 @@ public class Question {
         this.questionText = questionText;
     }
 
-    public int getCorrectAnswer() {
+    public String getCorrectAnswer() {
         return correctAnswer;
     }
 
-    public void setCorrectAnswer(int correctAnswer) {
+    public void setCorrectAnswer(String correctAnswer) {
         this.correctAnswer = correctAnswer;
     }
 

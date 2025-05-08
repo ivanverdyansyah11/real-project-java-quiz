@@ -32,7 +32,7 @@ public class AdminLoginServlet extends HttpServlet {
             session.setAttribute("admin", admin);
             session.setAttribute("loggedIn", "admin");
 
-            response.sendRedirect("all-quiz.jsp");
+            response.sendRedirect("all-question.jsp");
         } else {
             request.setAttribute("errorMessage", "Invalid username or password");
             request.getRequestDispatcher("login-admin.jsp").forward(request, response);

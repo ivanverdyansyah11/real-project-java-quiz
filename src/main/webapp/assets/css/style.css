@@ -7,6 +7,8 @@
     --light-color: 255, 255, 255;
     --grey-color: 246, 241, 241;
     --green-color: 22, 196, 127;
+    --blue-color: 4, 142, 214;
+    --yellow-color: 246, 196, 106;
     --red-color: 249, 56, 39;
 }
 /* END VARIABLE */
@@ -36,7 +38,9 @@ p,
 a,
 label,
 button,
-input {
+input,
+textarea,
+select {
     color: rgba(var(--dark-color), 1);
     font-size: 0.913rem;
     text-decoration: none;
@@ -89,7 +93,9 @@ form.form .form-group label {
     color: rgba(var(--dark-color), 0.62);
 }
 
-form.form .form-group input {
+form.form .form-group input,
+form.form .form-group textarea,
+form.form .form-group select {
     padding: 12px 16px;
     border: 1px solid rgba(var(--dark-color), 0.12);
     border-radius: 4px;
@@ -97,7 +103,9 @@ form.form .form-group input {
     color: rgba(var(--dark-color), 1);
 }
 
-form.form .form-group input::placeholder {
+form.form .form-group input::placeholder,
+form.form .form-group textarea::placeholder,
+form.form .form-group select::placeholder {
     color: rgba(var(--dark-color), 0.42);
     font-family: "Urbanist", sans-serif;
     font-optical-sizing: auto;
@@ -131,6 +139,94 @@ form.form .form-group input::placeholder {
     border-color: rgba(var(--primary-color), 1);
     color: rgba(var(--primary-color), 1);
     background-color: transparent;
+}
+
+table.table {
+    width: 100%;
+    border-collapse: collapse;
+    display: inline-block;
+    overflow: auto;
+    border-radius: 4px;
+}
+
+table.table tr,
+table.table th,
+table.table td {
+    width: 100%;
+    padding: 12px 16px;
+    border-top: 1px solid rgba(var(--dark-color), 0.12);
+    border-bottom: 1px solid rgba(var(--dark-color), 0.12);
+    white-space: nowrap;
+}
+
+table.table tr td:first-child,
+table.table tr th:first-child {
+    border-left: 1px solid rgba(var(--dark-color), 0.12);
+}
+
+table.table tr td:last-child,
+table.table tr th:last-child {
+    border-right: 1px solid rgba(var(--dark-color), 0.12);
+}
+
+table.table th,
+table.table td {
+    font-size: 0.85rem;
+    color: rgba(var(--dark-color), 0.62);
+}
+
+table.table th {
+    text-align: left;
+    font-weight: 500;
+    background-color: rgba(var(--dark-color), 0.04);
+    color: rgba(var(--dark-color), 0.42);
+}
+
+table.table td .action-button {
+    display: flex;
+    justify-content: flex-end;
+    gap: 4px;
+}
+
+table.table td .action-button .button {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+table.table td .action-button .button .icon {
+    width: 16px;
+    height: 16px;
+    aspect-ratio: 1/1;
+}
+
+table.table td .action-button .button.button-detail {
+    background-color: rgba(var(--blue-color), 0.12);
+}
+
+table.table td .action-button .button.button-detail:hover {
+    border-color: rgba(var(--blue-color), 0.24);
+}
+
+table.table td .action-button .button.button-edit {
+    background-color: rgba(var(--yellow-color), 0.12);
+}
+
+table.table td .action-button .button.button-edit:hover {
+    border-color: rgba(var(--yellow-color), 0.24);
+}
+
+table.table td .action-button .button.button-delete {
+    background-color: rgba(var(--red-color), 0.12);
+}
+
+table.table td .action-button .button.button-delete:hover {
+    border-color: rgba(var(--red-color), 0.24);
 }
 /* END COMPONENT */
 

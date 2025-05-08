@@ -33,7 +33,7 @@
                 <% for (Question.Option option : currentQuestion.getOptions()) { %>
                 <div class="form-group" style="flex-direction: row !important;">
                     <input type="radio" id="option<%= option.getLabel() %>" name="option"
-                           value="<%= getOptionValue(option.getLabel()) %>" required>
+                           value="<%= option.getLabel() %>" required>
                     <label for="option<%= option.getLabel() %>">
                         <%= option.getLabel() %>: <%= option.getText() %>
                     </label>
@@ -44,8 +44,5 @@
                 </div>
             </form>
         </div>
-
-        <%! private int getOptionValue(String label) { switch(label) { case "A" : return 1; case "B" :
-            return 2; case "C" : return 3; case "D" : return 4; default: return 0; } } %>
     </body>
 </html>
